@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# LineageOS branch version (for repository android_development)
+LINEAGEOS="22.2"
+
 # Prompt the user for each part of the subject line
 #read -p "Enter country code 'US' (C): " country
 #read -p "Enter state or province name 'California' (ST): " state
@@ -35,13 +38,23 @@ echo "$subject"
 #fi
 #clear
 
+# Download the official make_key script
+mkdir -p ./script/
+rm -f ./script/make_key
+wget https://raw.githubusercontent.com/LineageOS/android_development/refs/heads/lineage-"${LINEAGEOS}"/tools/make_key --quiet -O ./script/make_key
+chmod +x ./script/make_key
+
+if [[ ! -f "./script/make_key" ]]; then
+    echo "ERROR: Check if we can download the make_key script!"
+    exit 1
+fi
 
 # Create Key
 echo "Press ENTER TWICE to skip password (about 10-15 enter hits total). Cannot use a password for inline signing!"
 mkdir ~/.android-certs
 
 for x in bluetooth media networkstack nfc platform releasekey sdk_sandbox shared testkey verifiedboot; do \
-    ./development/tools/make_key ~/.android-certs/$x "$subject"; \
+    ./script/make_key ~/.android-certs/$x "$subject"; \
 done
 
 
