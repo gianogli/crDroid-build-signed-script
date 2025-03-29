@@ -49,20 +49,25 @@ if [[ ! -f "./script/make_key" ]]; then
     exit 1
 fi
 
-# Create Key
-echo "Press ENTER TWICE to skip password (about 10-15 enter hits total). Cannot use a password for inline signing!"
-mkdir ~/.android-certs
+# Create the folders where generate the keys
+rm -f ./certs-crDroid
+rm -f ./vendor-crDroid
+DATE=$(date +"%Y%m%d_%s")
+mkdir -p ./certs-"${DATE}"
+mkdir -p ./vendor-"${DATE}"/lineage-priv/keys
+ln -s ./certs-"${DATE}" ./certs-crDroid
+ln -s ./vendor-"${DATE}" ./vendor-crDroid
 
+# Create the keys for ~/.android-certs/ folder
+echo "INFO: Press ENTER to skip passwords (about 10-15 ENTER hits total). Cannot use a password for inline signing!"
 for x in bluetooth media networkstack nfc platform releasekey sdk_sandbox shared testkey verifiedboot; do \
-    ./script/make_key ~/.android-certs/$x "$subject"; \
+    ./script/make_key ./certs-crDroid/$x "$subject"; \
 done
 
-
-## Create vendor for keys
-mkdir -p vendor/lineage-priv
-mv ~/.android-certs vendor/lineage-priv/keys
-echo "PRODUCT_DEFAULT_DEV_CERTIFICATE := vendor/lineage-priv/keys/releasekey" > vendor/lineage-priv/keys/keys.mk
-cat <<EOF > vendor/lineage-priv/keys/BUILD.bazel
+# Create the vendor folder for build the ROM
+cp -a ./certs-crDroid/* ./vendor-crDroid/lineage-priv/keys/
+echo "PRODUCT_DEFAULT_DEV_CERTIFICATE := vendor/lineage-priv/keys/releasekey" > ./vendor-crDroid/lineage-priv/keys/keys.mk
+cat <<EOF > ./vendor-crDroid/lineage-priv/keys/BUILD.bazel
 filegroup(
     name = "android_certificate_directory",
     srcs = glob([
