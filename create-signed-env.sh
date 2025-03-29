@@ -78,6 +78,9 @@ filegroup(
 )
 EOF
 
+# Create a backup of the new keys
+tar -czf ./backup-vendor-crDroid-keys-"${DATE}".tgz -C ./vendor-crDroid/ .
+
 echo "Done! Now build as usual. If builds aren't being signed, add '-include vendor/lineage-priv/keys/keys.mk' to your device mk file"
 echo "Make copies of your vendor/lineage-priv folder as it contains your keys!"
 sleep 3
