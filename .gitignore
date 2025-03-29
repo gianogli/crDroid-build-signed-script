@@ -1,0 +1,4 @@
+script/
+certs-*/
+vendor-*/
+backup-vendor-crDroid-keys-*.tgz
