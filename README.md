@@ -7,19 +7,30 @@ This script only works for password-less keys (DO NOT SET A PASSWORD) *This is d
 *Works with crDroid 8.x+ or lineage19.1+*
 
 ## How to run
-1. Download the script in your root build directory and run it
+1. Clone the repository
 
-`wget https://raw.githubusercontent.com/306bobby-android/crDroid-build-signed-script/main/create-signed-env.sh`
+2. Run the script
 
 `chmod +x create-signed-env.sh`
 
 `./create-signed-env.sh`
 
-2. Enter info for certificate subject line and confirm
-
 3. Hit enter to set no password for each certificate. **Cannot set a password to build inline with this method!**
 
-### Prep device tree (for other ROMs)
+4. Create a link in your build environment to the ./vendor/lineage-priv folder
+
+`ln -s ./crDroid-build-signed-script/vendor-crDroid/lineage-priv ./build_env/vendor/lineage-priv`
+
+## Check the certs and the keys
+
+`cd ./certs-crDroid/`
+
+`openssl x509 -in cert.x509.pem -text -noout`
+
+`openssl pkcs8 -inform DER -in key.pk8 -nocrypt -out key.pem`
+`openssl rsa -in key.pem -text -noout`
+
+## Prep device tree (for other ROMs)
 In your device tree (or common device tree) add:
 
 `-include vendor/lineage-priv/keys/keys.mk`
